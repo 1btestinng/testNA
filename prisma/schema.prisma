@@ -1,0 +1,6 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+model Company { id String @id @default(cuid()) name String ticker String @unique exchange String country String industry String sharesOutstanding Decimal @db.Decimal(24,4) currency String active Boolean @default(true) createdAt DateTime @default(now()) updatedAt DateTime @updatedAt quotes MarketQuote[] }
+model MarketQuote { id String @id @default(cuid()) companyId String price Decimal @db.Decimal(24,8) previousClose Decimal? @db.Decimal(24,8) change Decimal? @db.Decimal(24,8) changePercent Decimal? @db.Decimal(12,6) volume Decimal? @db.Decimal(24,4) timestamp DateTime source String company Company @relation(fields:[companyId],references:[id],onDelete:Cascade) @@index([companyId,timestamp]) @@index([timestamp]) }
+model FXRate { id String @id @default(cuid()) baseCurrency String quoteCurrency String rate Decimal @db.Decimal(18,8) timestamp DateTime source String @@index([baseCurrency,quoteCurrency,timestamp]) }
+model MarketSnapshot { id String @id @default(cuid()) timestamp DateTime totalMarketCapEGP Decimal @db.Decimal(28,4) totalMarketCapUSD Decimal @db.Decimal(28,4) marketStatus String @@index([timestamp]) }
